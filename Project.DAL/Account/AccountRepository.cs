@@ -10,6 +10,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Project.DAL.Account
 {
@@ -28,6 +29,7 @@ namespace Project.DAL.Account
             _cacheService = cacheService;
         }
 
+        //Login session
         public async Task<LoginModel> Login(Login login)
         {
             var user = await _userManager.FindByNameAsync(login.Email);
@@ -39,6 +41,8 @@ namespace Project.DAL.Account
                     IsSuccess = false
                 };
             }
+
+            //Store the user email and it's id in cache memory so that anyone can use it further.
             var expirationTime = DateTimeOffset.Now.AddHours(1.0);
             _cacheService.SetData<string>("UserEmail", login.Email, expirationTime);
             _cacheService.SetData<string>("UserId", user.Id, expirationTime);

@@ -9,6 +9,9 @@ using System.Linq.Expressions;
 
 namespace AbjProject.Controllers
 {
+    /// <summary>
+    /// Will be accessed by the user role or simply say customer
+    /// </summary>
     [ApiController]
     [Authorize(Roles = "User")]
     [Route("api/[controller]")]
@@ -34,6 +37,7 @@ namespace AbjProject.Controllers
             return lambda;
         }
 
+        //Get all the porduct list applying sever side pagination and searching
         [HttpGet("GetAllProducts")]
         public async Task<IActionResult> GetAllProducts(int page = 1, int pageSize = 5, string? search = "", string? sort = "", string? column = "")
          {
@@ -41,11 +45,6 @@ namespace AbjProject.Controllers
 
             if (!string.IsNullOrEmpty(search))
             {
-                /*query = query.Where(x => x.Name.Contains(search) ||
-                                         x.Category.Contains(search) ||
-                                         x.Price.ToString().Contains(search) ||
-                                         x.Rating.Contains(search) ||
-                                         x.Quantity.ToString().Contains(search));*/
                 query = query.Where(x => x.Name.Contains(search) || x.Description.Contains(search) || x.Price.ToString().Contains(search) || x.Id.ToString().Contains(search));
             }
 
@@ -84,18 +83,7 @@ namespace AbjProject.Controllers
             return Ok(response);
         }
 
-        /*public async Task<IActionResult> GetProducts(int page = 1, int pageSize = 5)
-        {
-            var totalCount = await _dbContext.Products.CountAsync();
-            var totalPage = (int)Math.Ceiling((decimal)totalCount / pageSize);
-            var productPerPage = _dbContext.Products
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
-
-            return Ok(productPerPage);
-        }*/
-
+        //Add to cart option in which user can create it's own cart
         [HttpPost("AddToCart")]
         public async Task<IActionResult> AddToCart(AddToCart addToCart)
         {
@@ -128,6 +116,7 @@ namespace AbjProject.Controllers
             }
         }
 
+        //Checkout page, clicking this will delete the item from cart
         [HttpGet("Checkout")]
         public async Task<IActionResult> Checkout()
         {

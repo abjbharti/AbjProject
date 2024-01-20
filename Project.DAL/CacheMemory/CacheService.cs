@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace Project.DAL.CacheMemory
 {
+    /// <summary>
+    /// To store the data on cache
+    /// </summary>
     public class CacheService : ICacheService
     {
         readonly ObjectCache _memoryCache = System.Runtime.Caching.MemoryCache.Default;

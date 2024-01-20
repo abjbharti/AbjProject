@@ -16,6 +16,7 @@ namespace AbjProject.Controllers
             _accountRepository = accountRepository;
         }
 
+        //Create any new account
         [HttpPost("signup")]
         public IActionResult SignUp(Register Model)
         {
@@ -35,6 +36,7 @@ namespace AbjProject.Controllers
             return BadRequest(new { Message = "Invalid model state" });
         }
 
+        //Login your account
         [HttpPost("login")]
         public IActionResult Login(Login login)
         {

@@ -28,6 +28,7 @@ namespace Project.DAL.Context
             builder.Entity<AddToCart>().HasKey(addToCart => addToCart.Id);
         }
 
+        //Seed the user
         private static void SeedUsers(ModelBuilder builder)
         {
             var user1 = new IdentityUser()
@@ -54,6 +55,7 @@ namespace Project.DAL.Context
             builder.Entity<IdentityUser>().HasData(user2);
         }
 
+        //Seed the roles
         private static void SeedRoles(ModelBuilder builder)
         {
             builder.Entity<IdentityRole>().HasData(
@@ -62,6 +64,7 @@ namespace Project.DAL.Context
                 );
         }
 
+        //Seed the roles for user
         private static void SeedUserRoles(ModelBuilder builder)
         {
             builder.Entity<IdentityUserRole<string>>().HasData(

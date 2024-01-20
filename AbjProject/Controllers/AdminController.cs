@@ -9,6 +9,9 @@ using System.Linq.Expressions;
 
 namespace AbjProject.Controllers
 {
+    /// <summary>
+    /// Will be only accessed by the admin role
+    /// </summary>
     [ApiController]
     [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
@@ -25,6 +28,7 @@ namespace AbjProject.Controllers
             _cacheService = cacheService;
         }
 
+        //Get all the porducts
         [HttpGet("GetAllProducts")]
         public async Task<IActionResult> GetProducts()
         {
@@ -37,6 +41,7 @@ namespace AbjProject.Controllers
             return NotFound();
         }
 
+        //Get any specific product details
         [HttpGet("{id:guid}", Name = "GetProduct")]
         public async Task<IActionResult> GetProduct(Guid id)
         {
@@ -49,6 +54,7 @@ namespace AbjProject.Controllers
             return NotFound();
         }
 
+        //Add any products
         [HttpPost("AddProduct")]
         public async Task<IActionResult> AddProduct(Product model)
         {
@@ -63,6 +69,7 @@ namespace AbjProject.Controllers
             return Ok();
         }
 
+        //Edit the product
         [HttpPut("{id:guid}", Name = "EditProduct")]
         public async Task<IActionResult> EditProduct(Guid id, Product model)
         {
@@ -85,6 +92,7 @@ namespace AbjProject.Controllers
             return NotFound();
         }
 
+        //Delete any product
         [HttpDelete("{id:guid}", Name = "DeleteProduct")]
         public async Task<IActionResult> DeleteProduct(Guid id)
         {
