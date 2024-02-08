@@ -22,6 +22,7 @@ builder.Services.AddDbContext<ProjectDbContext>(option => option.UseSqlServer(bu
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ProjectDbContext>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IGenericRepository<Product>, GenericRepository<Product>>();
+builder.Services.AddScoped<IGenericRepository<AddToCart>, GenericRepository<AddToCart>>();
 builder.Services.AddScoped<ICacheService, CacheService>();
 
 builder.Services.AddEndpointsApiExplorer();
