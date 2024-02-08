@@ -18,12 +18,14 @@ namespace AbjProject.Controllers
     public class UserController : Controller
     {
         public IGenericRepository<Product> _genericRepository = null!;
+        public IGenericRepository<AddToCart> _genericRepositoryForAddToCart = null!;
         public ProjectDbContext _dbContext;
         private readonly ICacheService _cacheService;
 
-        public UserController(IGenericRepository<Product> genericRepository, ProjectDbContext dbContext, ICacheService cacheService)
+        public UserController(IGenericRepository<Product> genericRepository, IGenericRepository<AddToCart> genericRepositoryForAddToCart, ProjectDbContext dbContext, ICacheService cacheService)
         {
             _genericRepository = genericRepository;
+            _genericRepositoryForAddToCart = genericRepositoryForAddToCart;
             _dbContext = dbContext;
             _cacheService = cacheService;
         }
@@ -37,7 +39,7 @@ namespace AbjProject.Controllers
             return lambda;
         }
 
-        //Get all the porduct list applying sever side pagination and searching
+        //Get all the product list applying sever side pagination and searching
         [HttpGet("GetAllProducts")]
         public async Task<IActionResult> GetAllProducts(int page = 1, int pageSize = 5, string? search = "", string? sort = "", string? column = "")
          {
@@ -89,11 +91,12 @@ namespace AbjProject.Controllers
         {
             var userEmail = _cacheService.GetData<string>("UserEmail");
             var userId = _cacheService.GetData<string>("UserId");
-            var product = await _dbContext.Products.FindAsync(addToCart.Id);
+            var product = await _genericRepository.GetById(addToCart.ProductId);
 
             if (product != null)
             {
-                if (_dbContext.AddToCarts.Any(X => X.Id == product.Id))
+                var existingCartItem = await _genericRepositoryForAddToCart.FirstOrDefaultAsync(x => x.ProductId == product.Id);
+                if (existingCartItem != null)
                 {
                     return Ok();
                 }
@@ -105,8 +108,7 @@ namespace AbjProject.Controllers
                     addToCart.CustomerId = new Guid(userId);
                     addToCart.CustomerEmail = userEmail;
                     addToCart.IsCheckOut = false;
-                    await _dbContext.AddToCarts.AddAsync(addToCart);
-                    await _dbContext.SaveChangesAsync();
+                    await _genericRepositoryForAddToCart.Insert(addToCart);
                     return Ok(product);
                 }
             }
@@ -120,12 +122,11 @@ namespace AbjProject.Controllers
         [HttpGet("Checkout")]
         public async Task<IActionResult> Checkout()
         {
-            var allProductsInCart = await _dbContext.AddToCarts.ToListAsync();
+            var allProductsInCart = await _genericRepositoryForAddToCart.GetAll();
 
             if (allProductsInCart.Any())
             {
-                _dbContext.AddToCarts.RemoveRange(allProductsInCart);
-                await _dbContext.SaveChangesAsync();
+                await _genericRepositoryForAddToCart.Delete(allProductsInCart);
                 return Ok(allProductsInCart);
             }
 

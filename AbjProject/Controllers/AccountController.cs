@@ -18,15 +18,15 @@ namespace AbjProject.Controllers
 
         //Create any new account
         [HttpPost("signup")]
-        public IActionResult SignUp(Register Model)
+        public async Task<IActionResult> SignUp(Register Model)
         {
             if(ModelState.IsValid)
             {
-                var result = _accountRepository.Signup(Model);
+                var result = await _accountRepository.Signup(Model);
 
-                if(result.Result != null)
+                if(result != null)
                 {
-                    if(result.Result.IsSuccess)
+                    if(result.IsSuccess)
                     {
                         return Ok(new { Message = "Registration successful" });
                     }
@@ -38,19 +38,19 @@ namespace AbjProject.Controllers
 
         //Login your account
         [HttpPost("login")]
-        public IActionResult Login(Login login)
+        public async Task<IActionResult> Login(Login login)
         {
-            var result = _accountRepository.Login(login);
+            var result = await _accountRepository.Login(login);
 
             if (result != null)
             {
-                if (result.Result.IsSuccess)
+                if (result.IsSuccess)
                 {
                     return Ok(new
                     {
-                        result.Result.Token,
-                        result.Result.Username,
-                        result.Result.Role
+                        result.Token,
+                        result.Username,
+                        result.Role
                     });
                 }
 

@@ -18,13 +18,11 @@ namespace AbjProject.Controllers
     public class AdminController : Controller
     {
         public IGenericRepository<Product> _genericRepository;
-        public ProjectDbContext _dbContext;
         private readonly ICacheService _cacheService;
 
-        public AdminController(IGenericRepository<Product> genericRepository, ProjectDbContext dbContext, ICacheService cacheService)
+        public AdminController(IGenericRepository<Product> genericRepository, ICacheService cacheService)
         {
             _genericRepository = genericRepository;
-            _dbContext = dbContext;
             _cacheService = cacheService;
         }
 
@@ -62,7 +60,10 @@ namespace AbjProject.Controllers
             {
                 Name = model.Name,
                 Description = model.Description,
-                Price = model.Price
+                Price = model.Price,
+                Rating = model.Rating,
+                Category = model.Category,
+                Quantity = model.Quantity
             };
 
             await _genericRepository.Insert(product);
@@ -77,15 +78,14 @@ namespace AbjProject.Controllers
             {
                 throw new ArgumentNullException(nameof(model));
             }
-
-            var product = await _dbContext.Products.FindAsync(id);
+            var product = await _genericRepository.GetById(id);
 
             if (product != null)
             {
                 product.Name = model.Name;
                 product.Description = model.Description;
                 product.Price = model.Price;
-                await _dbContext.SaveChangesAsync();
+                await _genericRepository.Update(product);
                 return Ok(product);
             }
 
@@ -96,12 +96,11 @@ namespace AbjProject.Controllers
         [HttpDelete("{id:guid}", Name = "DeleteProduct")]
         public async Task<IActionResult> DeleteProduct(Guid id)
         {
-            var product = await _dbContext.Products.FindAsync(id);
+            var product = await _genericRepository.GetById(id);
 
             if (product != null)
             {
-                _dbContext.Products.Remove(product);
-                await _dbContext.SaveChangesAsync();
+                await _genericRepository.Delete(id);
                 return Ok(product);
             }
 
