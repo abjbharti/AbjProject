@@ -3,6 +3,7 @@ using Project.DAL.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -60,6 +61,11 @@ namespace Project.DAL.Generic
                 await Save();
             }
             return entity;
+        }
+
+        public async Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await entities.FirstOrDefaultAsync(predicate);
         }
 
         public async Task Save()

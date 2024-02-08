@@ -9,7 +9,10 @@ namespace Project.Models
 {
     public class AddToCart
     {
-        public Guid Id = Guid.NewGuid();
+        public int Id { get; set; }
+
+        [Required]
+        public Guid ProductId { get; set; }
         
         [Required]
         public string ProductName { get; set; }
